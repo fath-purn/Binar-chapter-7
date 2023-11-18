@@ -34,9 +34,13 @@ app.use(Sentry.Handlers.requestHandler());
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
 
-app.get('/', (req, res, next) => {
-  res.render('templates/activation-email', { name: 'Joko', url: 'https://google.com' });
+
+// render form lupa password
+app.get("/login", (req, res) => {
+  let { token } = req.query;
+  res.render("reset-password", { token });
 });
+
 
 const authRouter = require('./routes/auth.routes');
 app.use('/api/v1/auth', authRouter);

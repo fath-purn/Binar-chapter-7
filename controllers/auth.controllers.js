@@ -125,4 +125,38 @@ module.exports = {
       res.json({ status: true, message: "OK", err: null, data: updated });
     });
   },
+
+  forgotPassword: async (req, res, next) => {
+    try {
+      let { email } = req.query;
+
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return res.status(400).json({
+          status: false,
+          message: "Bad Request",
+          err: "user not found!",
+          data: null,
+        });
+      }
+
+      let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
+      let url = `http://localhost:3000/api/v1/auth/reset-password?token=${token}`;
+
+      const html = await nodemailer.getHtml("reset-password.ejs", {
+        name: user.name,
+        url,
+      });
+      nodemailer.sendEmail(email, "Reset Password", html);
+
+      return res.status(200).json({
+        status: true,
+        message: "OK",
+        err: null,
+        data: { user },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };

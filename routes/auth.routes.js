@@ -4,6 +4,7 @@ const {
   login,
   whoami,
   activate,
+  forgotPassword,
 } = require("../controllers/auth.controllers");
 const { restrict } = require("../middlewares/auth.middlewares");
 
@@ -19,5 +20,9 @@ router.get("/email-activation", (req, res) => {
 
 // update user.is_verified
 router.post("/email-activation", activate);
+
+router.get("/forgot-password", forgotPassword);
+
+
 
 module.exports = router;
