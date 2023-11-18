@@ -1,0 +1,5 @@
+
+# Sentry Config File
+.sentryclirc
+node_modules
+.env
