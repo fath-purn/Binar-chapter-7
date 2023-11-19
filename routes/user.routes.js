@@ -1,5 +1,8 @@
 const express = require("express");
+const { whoami, getNotif } = require("../controllers/auth.controllers");
 const router = express.Router();
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 // render form lupa password
 router.get("/login", (req, res) => {

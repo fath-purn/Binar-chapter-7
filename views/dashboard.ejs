@@ -1,43 +1,88 @@
 <h1 id="name"></h1>
-
-<!-- link ke gmail -->
-<a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" id="gmail" style="display: none;">Gmail</a>
+<a
+  href="https://mail.google.com/mail/u/0/#inbox"
+  target="_blank"
+  id="gmail"
+  style="display: none"
+  >Gmail</a
+>
 
 <form>
-    <button id="logout" type="submit">Logout</button>
+  <button id="logout" type="submit">Logout</button>
 </form>
 
+<!-- tampilkan list notif -->
+
+<h3>Notifikasi</h3>
+<ul id="list-notif">
+</ul>
+
+<!-- Socket.io -->
+<!-- <script src="/socket.io/socket.io.js"></script> -->
 <script>
-    (async function() {
-        const token = localStorage.getItem("token");
-        console.log(token);
+  (async () => {
+    // const socket = io("http://localhost:3000");
 
-        if (!token) {
-            window.location.href = "/login";
-        }
+    // socket.on("connect", () => {
+    //   console.log("Connected");
+    // });
 
-        const result = await fetch("http://localhost:3000/api/v1/auth/whoami", {
-            method: "GET",
-            headers: {
-                Authorization: `${token}`,
-            },
-        });
+    const token = localStorage.getItem("token");
 
-        const data = await result.json();
+    if (!token) {
+      window.location.href = "/login";
+    }
 
-        if (data.status === false && data.err === "You need to verify your email to continue" && data.message === "Unauthorized") {
-            document.querySelector("#gmail").style.display = "block";
-            document.querySelector("#name").innerHTML = `You need to verify your email to continue. Please check your email.`;
-        }
+    const result = await fetch("http://localhost:3000/api/v1/auth/whoami", {
+      method: "GET",
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
 
-        console.log(data);
-        document.querySelector("#name").innerHTML = `Hallo ${data.data.user.name}`;
+    const data = await result.json();
 
-        const logout = document.querySelector("#logout");
-        logout.addEventListener("click", () => {
-            localStorage.removeItem("token");
+    // sambungkan dengan notif
+    const notif = await fetch("http://localhost:3000/api/v1/auth/notifikasi", {
+      method: "POST",
+      body: JSON.stringify({
+        id: data.data.user.id,
+        title:"Pesan",
+        body:"Pesan dari admin"
+      }),
+    });
 
-            window.location.href = "/login";
-        });
-    })();
+    const dataNotif = await notif.json();
+    
+    const listNotif = document.querySelector("#list-notif");
+    console.log(dataNotif.data.notif);
+    dataNotif.data.notif.forEach((item, index) => {
+      if(dataNotif.data.notif[index].user_id === data.data.user.id){
+        const li = document.createElement("li");
+        li.innerHTML = item.title;
+        listNotif.appendChild(li);
+        console.log(item);
+      }
+    });
+
+    if (
+      data.status === false &&
+      data.err === "You need to verify your email to continue" &&
+      data.message === "Unauthorized"
+    ) {
+      document.querySelector("#gmail").style.display = "block";
+      document.querySelector(
+        "#name"
+      ).innerHTML = `You need to verify your email to continue. Please check your email.`;
+    }
+
+    document.querySelector("#name").innerHTML = `Hallo ${data.data.user.name}`;
+
+    const logout = document.querySelector("#logout");
+    logout.addEventListener("click", () => {
+      localStorage.removeItem("token");
+
+      window.location.href = "/login";
+    });
+  })();
 </script>
