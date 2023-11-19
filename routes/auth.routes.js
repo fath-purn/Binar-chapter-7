@@ -5,6 +5,7 @@ const {
   whoami,
   activate,
   forgotPassword,
+  setNewPassword,
 } = require("../controllers/auth.controllers");
 const { restrict } = require("../middlewares/auth.middlewares");
 
@@ -21,8 +22,16 @@ router.get("/email-activation", (req, res) => {
 // update user.is_verified
 router.post("/email-activation", activate);
 
+// render halaman lupa password
 router.get("/forgot-password", forgotPassword);
 
+// render halaman reset password
+router.get("/reset-password", (req, res) => {
+  let { token } = req.query;
+  res.render("reset-password", { token });
+});
 
+// update user password
+router.post("/reset-password", setNewPassword);
 
 module.exports = router;

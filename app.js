@@ -5,9 +5,10 @@ const Sentry = require("@sentry/node");
 const { ProfilingIntegration } = require("@sentry/profiling-node");
 const express = require("express");
 const morgan = require('morgan');
-const {PORT = 3000, SENTRI_DSN} = process.env;
-
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const {PORT = 3000, SENTRI_DSN} = process.env;
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -34,25 +35,27 @@ app.use(Sentry.Handlers.requestHandler());
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
 
-
-// render form lupa password
-app.get("/login", (req, res) => {
-  let { token } = req.query;
-  res.render("reset-password", { token });
-});
-
+// All controllers
+const userRouter = require('./routes/user.routes');
+app.use('/', userRouter);
 
 const authRouter = require('./routes/auth.routes');
 app.use('/api/v1/auth', authRouter);
 
 
-// The error handler must be registered before any other error middleware and after all controllers
+io.on('connection', (client) => {
+  console.log('new user connected!');
+
+  // subscribe topik 'chat message'
+  client.on('chat message', msg => {
+      io.emit('chat message', msg);
+  });
+});
+
 app.use(Sentry.Handlers.errorHandler());
 
 // Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
   res.statusCode = 500;
   res.end(res.sentry + "\n");
 });

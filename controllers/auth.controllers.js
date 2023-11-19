@@ -122,13 +122,18 @@ module.exports = {
         data: { is_verified: true },
       });
 
-      res.json({ status: true, message: "OK", err: null, data: updated });
+      return res.status(200).json({
+        status: true,
+        message: "OK",
+        err: null,
+        data: { user: updated },
+      });
     });
   },
 
   forgotPassword: async (req, res, next) => {
     try {
-      let { email } = req.query;
+      let { email } = req.body;
 
       let user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
@@ -147,6 +152,7 @@ module.exports = {
         name: user.name,
         url,
       });
+
       nodemailer.sendEmail(email, "Reset Password", html);
 
       return res.status(200).json({
@@ -154,6 +160,49 @@ module.exports = {
         message: "OK",
         err: null,
         data: { user },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  setNewPassword: async (req, res, next) => {
+    try {
+      let { token } = req.query;
+      let { password, password_confirmation } = req.body;
+      console.log(token, password, password_confirmation);
+
+      if (password != password_confirmation) {
+        return res.status(400).json({
+          status: false,
+          message: "Bad Request",
+          err: "please ensure that the password and password confirmation match!",
+          data: null,
+        });
+      }
+
+      jwt.verify(token, JWT_SECRET_KEY, async (err, decoded) => {
+        if (err) {
+          return res.status(400).json({
+            status: false,
+            message: "Bad request",
+            err: err.message,
+            data: null,
+          });
+        }
+
+        let encryptedPassword = await bcrypt.hash(password, 10);
+        let updated = await prisma.user.update({
+          where: { id: decoded.id },
+          data: { password: encryptedPassword },
+        });
+
+        return res.status(200).json({
+          status: true,
+          message: "OK",
+          err: null,
+          data: { user: updated },
+        });
       });
     } catch (err) {
       next(err);
