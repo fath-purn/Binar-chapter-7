@@ -38,9 +38,7 @@
         const result = await response.json();
 
         if (result.status === true) {
-            // teruskan ke dashboard dengan menyimpan token di localstorage
-            localStorage.setItem('token', result.data.token);
-            window.location.href = '/dashboard';
+            window.location.href = '/login';
         } else {
             alert(`${result.message}! Masukkan data yang benar`);
         }

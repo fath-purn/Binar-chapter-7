@@ -1,5 +1,8 @@
 const express = require("express");
+const { whoami } = require("../controllers/auth.controllers");
 const router = express.Router();
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 // render form lupa password
 router.get("/login", (req, res) => {
@@ -24,5 +27,21 @@ router.get("/forgot-password", (req, res) => {
 router.get('/reset-password', (req, res) => {
     res.render('reset-password.ejs');
 });
+
+// router.get('/dashboard', whoami, async (req, res) => {
+//   try {
+//     const notifikasi = await prisma.notifikasi.findMany({
+//       where: {
+//         userId: req.user.id,
+//       },
+//       orderBy: {
+//         createdAt: 'desc',
+//       },
+//     });
+//     res.render('dashboard', { ...req.user, notifikasi });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 module.exports = router;

@@ -23,7 +23,7 @@ router.get("/email-activation", (req, res) => {
 router.post("/email-activation", activate);
 
 // render halaman lupa password
-router.get("/forgot-password", forgotPassword);
+router.post("/forgot-password", forgotPassword);
 
 // render halaman reset password
 router.get("/reset-password", (req, res) => {

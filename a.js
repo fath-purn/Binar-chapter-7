@@ -4,14 +4,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../utils/nodemailer");
 const { JWT_SECRET_KEY } = process.env;
-// const express = require("express");
-// const app = express();
-// const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
+const express = require("express");
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-// });
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
 
 
 module.exports = {
@@ -47,6 +47,8 @@ module.exports = {
         },
       });
 
+      
+
       // kirim email
       let token = jwt.sign({ email: user.email }, JWT_SECRET_KEY);
       let url = `http://localhost:3000/api/v1/auth/email-activation?token=${token}`;
@@ -59,18 +61,19 @@ module.exports = {
 
       nodemailer.sendEmail(email, "Email Activation", html);
 
-      // try {
-      //   await prisma.notifikasi.create({
-      //     data: {
-      //       user_id: user.id,
-      //       title: 'Create Account',
-      //       message: `Selamat anda berhasil login!`,
-      //     },
-      //   });
+
+      try {
+        await prisma.notifikasi.create({
+          data: {
+            user_id: user.id,
+            title: 'Create Account',
+            message: `Selamat anda berhasil login!`,
+          },
+        });
         
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      } catch (error) {
+        console.log(error);
+      }
 
       return res.status(201).json({
         status: true,

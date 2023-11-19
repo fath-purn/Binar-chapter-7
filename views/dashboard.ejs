@@ -7,8 +7,33 @@
     <button id="logout" type="submit">Logout</button>
 </form>
 
+<div>
+  <h2>Notifikasi</h2>
+  <ul id="notificationList" class="mb-4">
+    <% notifications.map(element => { %>
+    <div>
+      <p><span>Info:</span> <%= element.body %></p>
+    </div>
+    <% }) %>
+  </ul>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
 <script>
     (async function() {
+      ocket = io("http://localhost:3000");
+  const notificationList = document.getElementById("notificationList");
+  socket.on(`userId-<%= id %>-notification`, function (args) {
+    const item = document.createElement("li");
+    console.log(args);
+    item.innerHTML = `<div>
+          <p><span>Info:</span> ${args.message}</p>
+        </div>`;
+    notificationList.appendChild(item);
+  });
+
+
         const token = localStorage.getItem("token");
         console.log(token);
 

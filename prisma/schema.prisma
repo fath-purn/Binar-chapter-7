@@ -16,4 +16,16 @@ model User {
   email       String  @unique
   password    String
   is_verified Boolean @default(false)
+  notifikasi  Notifikasi[]
+}
+
+model Notifikasi {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id])
+  title     String
+  message   String
+  is_read   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
