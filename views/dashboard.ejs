@@ -1,0 +1,43 @@
+<h1 id="name"></h1>
+
+<!-- link ke gmail -->
+<a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" id="gmail" style="display: none;">Gmail</a>
+
+<form>
+    <button id="logout" type="submit">Logout</button>
+</form>
+
+<script>
+    (async function() {
+        const token = localStorage.getItem("token");
+        console.log(token);
+
+        if (!token) {
+            window.location.href = "/login";
+        }
+
+        const result = await fetch("http://localhost:3000/api/v1/auth/whoami", {
+            method: "GET",
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        const data = await result.json();
+
+        if (data.status === false && data.err === "You need to verify your email to continue" && data.message === "Unauthorized") {
+            document.querySelector("#gmail").style.display = "block";
+            document.querySelector("#name").innerHTML = `You need to verify your email to continue. Please check your email.`;
+        }
+
+        console.log(data);
+        document.querySelector("#name").innerHTML = `Hallo ${data.data.user.name}`;
+
+        const logout = document.querySelector("#logout");
+        logout.addEventListener("click", () => {
+            localStorage.removeItem("token");
+
+            window.location.href = "/login";
+        });
+    })();
+</script>
