@@ -1,5 +1,5 @@
 const express = require("express");
-const { whoami } = require("../controllers/auth.controllers");
+const { whoami, getNotif } = require("../controllers/auth.controllers");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -27,6 +27,5 @@ router.get("/forgot-password", (req, res) => {
 router.get('/reset-password', (req, res) => {
     res.render('reset-password.ejs');
 });
-
 
 module.exports = router;

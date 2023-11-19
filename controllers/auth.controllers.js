@@ -6,13 +6,12 @@ const nodemailer = require("../utils/nodemailer");
 const { JWT_SECRET_KEY } = process.env;
 const express = require("express");
 const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+io.on("connection", (socket) => {
+  console.log("a user connected");
 });
-
 
 module.exports = {
   register: async (req, res, next) => {
@@ -49,7 +48,7 @@ module.exports = {
       await prisma.notifikasi.create({
         data: {
           user_id: user.id,
-          title: 'Create Account',
+          title: "Create Account",
           message: `Selamat anda berhasil login!`,
         },
       });
@@ -215,13 +214,13 @@ module.exports = {
 
         io.emit(`userId-${updated.id}-notification`, {
           message: `Ganti password berhasil!`,
-          category: 'info',
+          category: "info",
         });
-    
+
         await prisma.notifikasi.create({
           data: {
             user_id: updated.id,
-            title: 'Reset Password',
+            title: "Reset Password",
             message: `Ganti password berhasil!`,
           },
         });
@@ -239,24 +238,25 @@ module.exports = {
   },
 
   getNotif: async (req, res, next) => {
-    // get notif dari id
     try {
-      
       let { user_id } = req.body;
-      console.log(req);
       let notif = await prisma.notifikasi.findMany({
-      where: { user_id: user_id },
-      orderBy: { id: 'desc' },
-    });
-    return res.status(200).json({
-      status: true,
-      message: "OK",
-      err: null,
-      data: { notif },
-    });
+        where: { user_id: user_id },
+        orderBy: { id: "desc" },
+      });
+      return res.status(200).json({
+        status: true,
+        message: "OK",
+        err: null,
+        data: { notif },
+      });
     } catch (error) {
-      console.log(error);
+      res.status(500).json({
+        status: false,
+        message: "Internal Server Error",
+        err: error.message,
+        data: null,
+      });
     }
   },
-
 };

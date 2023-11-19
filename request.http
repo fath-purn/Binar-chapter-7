@@ -39,12 +39,21 @@ GET http://localhost:3000/api/v1/auth/whoami
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImlhdCI6MTcwMDM5MTQ3MX0.CYXzDZ3mp0u0WzIOoyqj29U9n1apGp3Y0HxD6ZY1mV8
 
 ### 
+POST http://localhost:3000/api/v1/auth/makanan
+Content-Type: application/json
+
+{
+  "user_id":51,
+}
+
+###
 POST http://localhost:3000/api/v1/auth/notifikasi
 Content-Type: application/json
-   
+  
 {
-    # "user_id":"51",
-    "title":"New message",
+  "user_id":52,
+  "title":"Pesan",
+  "body":"Pesan dari admin"
 }
 
 ###
@@ -64,16 +73,3 @@ Content-Type: application/json
   "password_confirmation": "Cobalagi"
 }
  
-###
-POST http://localhost:3000/notification
-Content-Type: application/json
-
-{
-    "user_id":1,
-    "title":"New message 2",
-    "body":"pesan baru kedua"
-}
-
-###
-GET https://localhost:3000/api/v1/auth/notifikasi
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImlhdCI6MTcwMDM5MTA2M30.0An05LpEK4w5klo-15MvI2YK88KF8upg01K0g49K-2M

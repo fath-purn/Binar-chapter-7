@@ -13,7 +13,9 @@
 
 <!-- tampilkan list notif -->
 
-<ul id="list-notif"></ul>
+<h3>Notifikasi</h3>
+<ul id="list-notif">
+</ul>
 
 <!-- Socket.io -->
 <!-- <script src="/socket.io/socket.io.js"></script> -->
@@ -26,7 +28,6 @@
     // });
 
     const token = localStorage.getItem("token");
-    console.log(token);
 
     if (!token) {
       window.location.href = "/login";
@@ -42,16 +43,27 @@
     const data = await result.json();
 
     // sambungkan dengan notif
-    const notif = await fetch("http://localhost:3000/api/v1/notifikasi", {
+    const notif = await fetch("http://localhost:3000/api/v1/auth/notifikasi", {
       method: "POST",
       body: JSON.stringify({
         id: data.data.user.id,
+        title:"Pesan",
+        body:"Pesan dari admin"
       }),
     });
 
     const dataNotif = await notif.json();
     
     const listNotif = document.querySelector("#list-notif");
+    console.log(dataNotif.data.notif);
+    dataNotif.data.notif.forEach((item, index) => {
+      if(dataNotif.data.notif[index].user_id === data.data.user.id){
+        const li = document.createElement("li");
+        li.innerHTML = item.title;
+        listNotif.appendChild(li);
+        console.log(item);
+      }
+    });
 
     if (
       data.status === false &&
@@ -64,7 +76,6 @@
       ).innerHTML = `You need to verify your email to continue. Please check your email.`;
     }
 
-    console.log(data);
     document.querySelector("#name").innerHTML = `Hallo ${data.data.user.name}`;
 
     const logout = document.querySelector("#logout");
