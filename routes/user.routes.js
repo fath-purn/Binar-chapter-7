@@ -28,20 +28,5 @@ router.get('/reset-password', (req, res) => {
     res.render('reset-password.ejs');
 });
 
-// router.get('/dashboard', whoami, async (req, res) => {
-//   try {
-//     const notifikasi = await prisma.notifikasi.findMany({
-//       where: {
-//         userId: req.user.id,
-//       },
-//       orderBy: {
-//         createdAt: 'desc',
-//       },
-//     });
-//     res.render('dashboard', { ...req.user, notifikasi });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 module.exports = router;

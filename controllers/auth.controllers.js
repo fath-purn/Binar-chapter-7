@@ -4,14 +4,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../utils/nodemailer");
 const { JWT_SECRET_KEY } = process.env;
-// const express = require("express");
-// const app = express();
-// const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
+const express = require("express");
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-// });
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
 
 
 module.exports = {
@@ -28,7 +28,6 @@ module.exports = {
       }
 
       let userExist = await prisma.user.findUnique({ where: { email } });
-      
       if (userExist) {
         return res.status(400).json({
           status: false,
@@ -47,30 +46,23 @@ module.exports = {
         },
       });
 
+      await prisma.notifikasi.create({
+        data: {
+          user_id: user.id,
+          title: 'Create Account',
+          message: `Selamat anda berhasil login!`,
+        },
+      });
+
       // kirim email
       let token = jwt.sign({ email: user.email }, JWT_SECRET_KEY);
       let url = `http://localhost:3000/api/v1/auth/email-activation?token=${token}`;
 
-
-      const html = await nodemailer.getHtml("email-activation.ejs", {
-        name: user.name,
+      const html = await nodemailer.getHtml("activation-email.ejs", {
+        name,
         url,
       });
-
       nodemailer.sendEmail(email, "Email Activation", html);
-
-      // try {
-      //   await prisma.notifikasi.create({
-      //     data: {
-      //       user_id: user.id,
-      //       title: 'Create Account',
-      //       message: `Selamat anda berhasil login!`,
-      //     },
-      //   });
-        
-      // } catch (error) {
-      //   console.log(error);
-      // }
 
       return res.status(201).json({
         status: true,
@@ -80,12 +72,6 @@ module.exports = {
       });
     } catch (err) {
       next(err);
-      return res.status(500).json({
-        status: false,
-        message: "Internal Server Error",
-        err: err.message,
-        data: null,
-      });
     }
   },
 
@@ -220,10 +206,10 @@ module.exports = {
             data: null,
           });
         }
-      
+
         let encryptedPassword = await bcrypt.hash(password, 10);
         let updated = await prisma.user.update({
-          where: { id: decoded.id }, // Use decoded.id instead of updated.id
+          where: { id: decoded.id },
           data: { password: encryptedPassword },
         });
 
@@ -251,5 +237,26 @@ module.exports = {
       next(err);
     }
   },
-};
 
+  getNotif: async (req, res, next) => {
+    // get notif dari id
+    try {
+      
+      let { user_id } = req.body;
+      console.log(req);
+      let notif = await prisma.notifikasi.findMany({
+      where: { user_id: user_id },
+      orderBy: { id: 'desc' },
+    });
+    return res.status(200).json({
+      status: true,
+      message: "OK",
+      err: null,
+      data: { notif },
+    });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+};

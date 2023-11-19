@@ -256,3 +256,72 @@ module.exports = {
   },
 };
 
+
+{/* <h1 id="name"></h1>
+
+<!-- link ke gmail -->
+<a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" id="gmail" style="display: none;">Gmail</a>
+
+<form>
+    <button id="logout" type="submit">Logout</button>
+</form>
+
+<!-- <div>
+  <h2>Notifikasi</h2>
+  <ul id="notificationList" class="mb-4">
+    <% notifications.map(element => { %>
+    <div>
+      <p><span>Info:</span> <%= element.body %></p>
+    </div>
+    <% }) %>
+  </ul>
+</div>
+
+<script src="/socket.io/socket.io.js"></script> -->
+
+<script>
+    // (async function() {
+  //     const socket = io('http://localhost:3000');
+  // const notificationList = document.getElementById("notificationList");
+  // socket.on(`userId-<%= id %>-notification`, function (args) {
+  //   const item = document.createElement("li");
+  //   console.log(args);
+  //   item.innerHTML = `<div>
+  //         <p><span>Info:</span> ${args.message}</p>
+  //       </div>`;
+  //   notificationList.appendChild(item);
+  // });
+
+
+    //     const token = localStorage.getItem("token");
+    //     console.log(token);
+
+    //     if (!token) {
+    //         window.location.href = "/login";
+    //     }
+
+    //     const result = await fetch("http://localhost:3000/api/v1/auth/whoami", {
+    //         method: "GET",
+    //         headers: {
+    //             Authorization: `${token}`,
+    //         },
+    //     });
+
+    //     const data = await result.json();
+
+    //     if (data.status === false && data.err === "You need to verify your email to continue" && data.message === "Unauthorized") {
+    //         document.querySelector("#gmail").style.display = "block";
+    //         document.querySelector("#name").innerHTML = `You need to verify your email to continue. Please check your email.`;
+    //     }
+
+    //     console.log(data);
+    //     document.querySelector("#name").innerHTML = `Hallo ${data.data.user.name}`;
+
+    //     const logout = document.querySelector("#logout");
+    //     logout.addEventListener("click", () => {
+    //         localStorage.removeItem("token");
+
+    //         window.location.href = "/login";
+    //     });
+    // })();
+</script> */}

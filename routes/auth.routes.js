@@ -6,6 +6,7 @@ const {
   activate,
   forgotPassword,
   setNewPassword,
+  getNotif,
 } = require("../controllers/auth.controllers");
 const { restrict } = require("../middlewares/auth.middlewares");
 
@@ -33,5 +34,8 @@ router.get("/reset-password", (req, res) => {
 
 // update user password
 router.post("/reset-password", setNewPassword);
+
+// notifikasi
+router.post("/notifikasi", getNotif);
 
 module.exports = router;
